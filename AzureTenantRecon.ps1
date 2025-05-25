@@ -11,7 +11,7 @@ Write-Host ("`n")
 Write-Host -ForegroundColor Cyan    ("      DESCRIPTION")
 Write-Host -ForegroundColor Blue    ("          This tool gathers passive information on a specified domain. ") 
 Write-Host -ForegroundColor Blue    ("          The purpose is to provide an easy way to see if a domain is managed or federated within the Microsoft ecosystem. ")
-Write-Host -ForegroundColor Blue    ("          It will also do an IP lookup to see what IPs are connected to the specified domain, and what region/regions the IPs belong to.")
+Write-Host -ForegroundColor Blue    ("          It will also do an IP lookup to see what IPs are connected to the specified domain, what region/regions the IPs belong to as well as any associated mailservers.")
 Write-Host -ForegroundColor Blue    ("          Lastly it will provide the Tenant ID for the specified domain. ")
 Write-Host ("`n")
 Write-Host -ForegroundColor Cyan    ("      SYNTAX")
@@ -29,11 +29,11 @@ Write-Host ("`n")
 function Test-Domain {
     <#
         .SYNOPSIS
-            Validates the syntax of a domain name, checks if it exists via DNS, and retrieves associated IPv4 and IPv6 addresses.
+            Validates the syntax of a domain name, checks if it exists via DNS, and retrieves associated IPv4 and IPv6 addresses as well as associated mailserver.
     
         .DESCRIPTION
-            This function takes a domain name as input, checks whether it's correctly formatted, verifies if it exists by querying DNS NS records, and collects any A (IPv4) and AAAA (IPv6) DNS records associated with it.
-            The results are returned as a custom PowerShell object containing validation status and IP addresses.
+            This function takes a domain name as input, checks whether it's correctly formatted, verifies if it exists by querying DNS NS records, collects any A (IPv4) and AAAA (IPv6) DNS records associated with it, and checks associated mailservers.
+            The results are returned as a custom PowerShell object containing validation status, IP addresses, and mailservers.
 
         .PARAMETER Domain
             The domain name to validate and check DNS records for (e.g., "example.com").
@@ -43,6 +43,7 @@ function Test-Domain {
                 - Domain            : The domain name that was tested.
                 - ValidFormat       : Boolean indicating if the domain's format is valid.
                 - ExistsInDns       : Boolean indicating if the domain exists in DNS.
+                - MailServer        : The name of the mailserver (if it exists)
                 - IPv4Addresses     : An array of resolved IPv4 addresses.
                 - IPv6Addresses     : An array of resolved IPv6 addresses.
 
@@ -100,6 +101,13 @@ function Test-Domain {
                 }
             } catch {}
 
+            try {
+                $mxResult = Resolve-DnsName -Name $Domain -Type MX -ErrorAction SilentlyContinue
+                if ($mxResult) {
+                    $mxServer = $mxResult | Where-Object { $_.RecordData} | Select-Object -ExpandProperty RecordData
+                }
+            } catch {}
+
         } catch {
             $dnsExists = $false
         }
@@ -110,6 +118,7 @@ function Test-Domain {
         Domain          = $Domain
         ValidFormat     = $isValidFormat
         ExistsInDNS     = $dnsExists
+        MailServer      = $mxServer
         IPv4Addresses   = $ipv4
         IPv6Addresses   = $ipv6
     }
@@ -284,6 +293,7 @@ function Get-DomainAzureStatus {
             - Prompts the user to input a domain name.
             - Validates the domain format and existence using DNS records.
             - Queries Microsoft's "getuserrealm.srf" endpoint to determine if the domain is Managed (Azure AD), Federated (e.g., ADFS), or Unknown.
+            - Collects mailservers associated with the domain.
             - Collects IPv4 and IPv6 addresses associated with the domain.
             - Determines if these IPs are owned by Microsoft and identifies their Azure regions.
             - Retrieves the tenant ID associated with the domain via Microsoft's OpenID Connect configuration.
@@ -310,6 +320,7 @@ function Get-DomainAzureStatus {
             Domain        : contoso.com
             ValidFormat   : True
             ExistsInDNS   : True
+            MailServer    :10 contoso-com.mail.protection.outlook.com.
             IPv4Addresses : {20.70.246.20}
             IPv6Addresses : {}
 
