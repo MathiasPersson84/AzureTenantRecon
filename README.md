@@ -54,7 +54,7 @@ cd AzureTenantRecon
 
 ### 3. Run the tool
 ```powershell
-Get-AzureDomainStatus
+Get-DomainAzureStatus
 ```
 
 ---
