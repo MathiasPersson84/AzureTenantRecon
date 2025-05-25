@@ -93,4 +93,8 @@ PS C:\> Get-DomainAzureStatus
 ```
 ---
 
+## Disclaimer
+
+This tool relies on external APIs provided by Microsoft and ipinfo.io. Ensure you are compliant with their usage terms when using this script in production environments.
+
 ---
