@@ -20,11 +20,12 @@ The tool only uses public API endpoints and websites.
 ## Features
 
 - Validates domain format.
-- Resolves DNS (NS, A, AAAA) and checks domain existence.
+- Resolves DNS (NS, A, AAAA, MX) and checks domain existence.
 - Checks if the domain is:
   - Managed by Azure
   - Federated (e.g., ADFS)
   - Neither managed or federated
+- Gathers the mailserver associated to the domain.
 - Gathers public IPv4 and IPv6 addresses for the domain.
 - Checks if the IP belongs to Microsoft IP address space.
 - Identifies the Azure region of the IP address via "azservicetags".
@@ -73,6 +74,7 @@ PS C:\> Get-DomainAzureStatus
             Domain        : contoso.com
             ValidFormat   : True
             ExistsInDNS   : True
+            MailServer    : 10 contoso-com.mail.protection.outlook.com.
             IPv4Addresses : {20.70.246.20}
             IPv6Addresses : {}
 
