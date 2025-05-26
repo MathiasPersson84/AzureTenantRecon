@@ -25,7 +25,7 @@ The tool only uses public API endpoints and websites.
   - Managed by Azure
   - Federated (e.g., ADFS)
   - Neither managed or federated
-- Gathers the mailserver associated to the domain.
+- Gathers the mailserver associated with the domain.
 - Gathers public IPv4 and IPv6 addresses for the domain.
 - Checks if the IP belongs to Microsoft IP address space.
 - Identifies the Azure region of the IP address via "azservicetags".
