@@ -247,9 +247,6 @@ function Get-AzureDomainIpInfo {
         return 
     }
 
-    # Call the Test-Domain function
-    $domainInfo = Test-Domain -Domain $Domain
-
     # Loop through the gathered IP addresses and check them against ipinfo.io to see wether they belong to Microsoft or not, 
     Write-Host -ForegroundColor Cyan ("`n[*] Information from ipinfo.io: `n")
 
