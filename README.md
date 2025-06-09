@@ -100,3 +100,11 @@ PS C:\> Get-DomainAzureStatus
 This tool relies on external APIs provided by Microsoft and ipinfo.io. Ensure you are compliant with their usage terms when using this script in production environments.
 
 ---
+
+## License
+This project is released under the GNU General Public License v3.0.
+
+---
+
+## Contributing
+Contributions and pull requests are welcome! Feel free to fork, improve, and submit suggestions via GitHub issues or PRs.
